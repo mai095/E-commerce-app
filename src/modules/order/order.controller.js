@@ -103,14 +103,22 @@ export const paymentSession = async (req, res, next) => {
     cancel_url: process.env.CANCEL_URL,
     customer_email: req.userData.email,
     client_reference_id: cart._id.toString(), //unique id for session after payment
+    metadata: {
+      order_id: order._id.toString(),
+      shippingAddress: {
+        city: req.body.city,
+        address: req.body.address,
+      },
+      phone: req.body.phone,
+    },
   });
   res.json({ url: session.url });
 };
 
 // &createWebhook
-export const createWebhook= async (request, response) => {
-const stripe = new Stripe(process.env.STRIPE_KEY);
-const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
+export const createWebhook = async (request, response) => {
+  const stripe = new Stripe(process.env.STRIPE_KEY);
+  const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
   const sig = request.headers["stripe-signature"];
   let event;
   try {
@@ -124,8 +132,7 @@ const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
   switch (event.type) {
     case "checkout.session.completed":
       const data = event.data.object;
-      console.log('createWebhook');
-      console.log(data);
+      await onlinePayment(data);
       break;
     // ... handle other event types
     default:
@@ -133,5 +140,25 @@ const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
   }
 
   // Return a 200 response to acknowledge receipt of the event
-  response.json('createWebhook is done');
-}
+  response.json("createWebhook is done");
+};
+
+export const onlinePayment = async (data) => {
+  const { client_reference_id, customer_email } = data;
+  const cart = await cartModel.findById(client_reference_id);
+  //create order
+  const order = await orderModel.create({
+    ...req.body,
+    isPaid: true,
+    user: customer_email,
+    products: cart.products.map(
+      ({ productId: { title, price, finalPrice, _id }, quantity }) => ({
+        quantity,
+        product: { title, price, finalPrice, productId: _id },
+      })
+    ),
+    phone: data.metadata.phone,
+    phone: data.metadata.shippingAddress,
+  });
+  if (!order) return next(new Error("Order failed", { cause: 400 }));
+};

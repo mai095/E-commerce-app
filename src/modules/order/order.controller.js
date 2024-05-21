@@ -104,3 +104,31 @@ export const paymentSession = async (req, res, next) => {
   });
   res.json({ url: session.url });
 };
+
+// &createWebhook
+export const createWebhook= async (request, response) => {
+const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
+  const sig = request.headers["stripe-signature"];
+  let event;
+  try {
+    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+  } catch (err) {
+    response.status(400).send(`Webhook Error: ${err.message}`);
+    return;
+  }
+
+  // Handle the event
+  switch (event.type) {
+    case "checkout.session.completed":
+      const data = event.data.object;
+      console.log('createWebhook');
+      console.log(data);
+      break;
+    // ... handle other event types
+    default:
+      console.log(`Unhandled event type ${event.type}`);
+  }
+
+  // Return a 200 response to acknowledge receipt of the event
+  response.json('createWebhook is done');
+}

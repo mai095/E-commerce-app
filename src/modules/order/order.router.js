@@ -39,7 +39,7 @@ orderRouter.get(
 orderRouter.post(
   "/webhook",
   express.raw({ type: "application/json" }),
-  catchError(orderController.orderWebhook)
+  catchError(orderController.createWebhook)
 );
 
 export default orderRouter;

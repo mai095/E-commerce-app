@@ -109,6 +109,7 @@ export const paymentSession = async (req, res, next) => {
 
 // &createWebhook
 export const createWebhook= async (request, response) => {
+const stripe = new Stripe(process.env.STRIPE_KEY);
 const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
   const sig = request.headers["stripe-signature"];
   let event;

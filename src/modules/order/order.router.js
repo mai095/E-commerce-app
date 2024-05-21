@@ -28,7 +28,7 @@ orderRouter
   );
 
 // &getOrder
-orderRouter.get(
+orderRouter.get('/',
   isAuthenticated,
   isAuthorized("user"),
   catchError(orderController.getOrder)

@@ -13,8 +13,8 @@ const app = express();
 app.use(cors());
 
 app.use((req, res, next) => {
-  //webhook user buffer data
-  if (req.originalUrl === "/order/webhook") {
+  //webhook use buffer data
+  if (req.originalUrl === "/webhook") {
     return next();
   }
   express.json()(req, res, next);

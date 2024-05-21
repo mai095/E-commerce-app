@@ -7,6 +7,7 @@ import { allRoutes } from "./src/routes.js";
 dotenv.config();
 
 const port = +process.env.PORT;
+const app = express();
 
 connectDB();
 const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
@@ -42,16 +43,15 @@ app.post(
   }
 );
 
-const app = express();
 app.use(cors());
-
-app.use((req, res, next) => {
-  //webhook use buffer data
-  if (req.originalUrl === "/webhook") {
-    return next();
-  }
-  express.json()(req, res, next);
-});
+app.use(express.json())
+// app.use((req, res, next) => {
+//   //webhook use buffer data
+//   if (req.originalUrl === "/webhook") {
+//     return next();
+//   }
+//   express.json()(req, res, next);
+// });
 
 checkDataBase();
 allRoutes(app);

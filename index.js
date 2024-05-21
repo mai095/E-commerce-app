@@ -20,7 +20,7 @@ app.use((req, res, next) => {
   if (req.originalUrl == "/order/webhook") {
     return next();
   }
-  express.json();
+  express.json((req, res, next));
 });
 
 checkDataBase();

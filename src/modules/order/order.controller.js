@@ -2,7 +2,8 @@ import { cartModel } from "../../../DB/models/cart.model.js";
 import { orderModel } from "../../../DB/models/order.model.js";
 import productModel from "../../../DB/models/product.model.js";
 import Stripe from "stripe";
-const stripe = new Stripe(process.env.STRIPE_KEY);
+import dotenv from "dotenv";
+dotenv.config();
 
 //& cashOrder
 export const cashOrder = async (req, res, next) => {
@@ -107,6 +108,7 @@ export const paymentSession = async (req, res, next) => {
 
 // &createWebhook
 export const createWebhook= async (request, response) => {
+const stripe = new Stripe(process.env.STRIPE_KEY);
 const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
   const sig = request.headers["stripe-signature"];
   let event;

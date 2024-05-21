@@ -8,7 +8,7 @@ import productRouter from "./modules/product/product.router.js";
 import reviewRouter from "./modules/review/review.router.js";
 import subcategoryRouter from "./modules/subCategory/subCategory.router.js";
 import wishlistRouter from "./modules/wishlist/wishlist.router.js";
-import express from "express";
+
 
 export const allRoutes = (app) => {
   app.use("/api/v1/auth", authRouter);
@@ -23,9 +23,4 @@ export const allRoutes = (app) => {
   app.use("/api/v1/review", reviewRouter);
 };
 
-import Stripe from "stripe";
-const stripe = new Stripe(process.env.STRIPE_KEY);
-const app = express();
-
-// This is your Stripe CLI webhook secret for testing your endpoint locally.
 

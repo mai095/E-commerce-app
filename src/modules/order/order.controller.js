@@ -84,6 +84,7 @@ export const paymentSession = async (req, res, next) => {
     return next(
       new Error("Empty Cart!,Try to add some products", { cause: 400 })
     );
+
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {
@@ -104,7 +105,6 @@ export const paymentSession = async (req, res, next) => {
     customer_email: req.userData.email,
     client_reference_id: cart._id.toString(), //unique id for session after payment
     metadata: {
-      order_id: order._id.toString(),
       shippingAddress: {
         city: req.body.city,
         address: req.body.address,

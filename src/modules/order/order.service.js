@@ -58,6 +58,6 @@ export function createOrder() {
       }));
       await productModel.bulkWrite(options);
     }
+    return order;
   };
-  return order;
 }

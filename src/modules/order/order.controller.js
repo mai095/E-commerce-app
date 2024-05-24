@@ -21,6 +21,7 @@ export const cashOrder = async (req, res, next) => {
 // &paymentSession
 export const paymentSession = async (req, res, next) => {
   const order = await createOrder(req, res, next);
+  const cart = await cartModel.findOne({ user: req.userData._id });
   const session = await stripe.checkout.sessions.create({
     line_items: [
       {

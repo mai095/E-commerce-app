@@ -1,7 +1,6 @@
 import { cartModel } from "../../../DB/models/cart.model.js";
 import { orderModel } from "../../../DB/models/order.model.js";
 import productModel from "../../../DB/models/product.model.js";
-import catchError from "../../middlewares/catchError.js";
 
 export async function createOrder(req, res, next) {
   //get user cart

@@ -116,7 +116,8 @@ export function paymentSession() {
         phone: req.body.phone,
       },
     });
-    res.json({ url: session.url });
+    // res.json({ url: session.url });
+    return session.url
   };
 }
 

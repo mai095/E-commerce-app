@@ -68,6 +68,8 @@ const activation = async (req, res, next) => {
 
 // ^logIn
 const logIn = async (req, res, next) => {
+console.log(req.originalUrl);
+
   //check email in Db
   const user = await userModel.findOne({
     email: req.body.email,

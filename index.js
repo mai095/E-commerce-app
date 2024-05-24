@@ -24,7 +24,6 @@ app.use((req, res, next) => {
 
 checkDataBase();
 allRoutes(app);
-console.log(req.originalUrl);
 app.use("*", (req, res, next) => {
   return next(new Error("Url not found", { cause: 404 }));
 });

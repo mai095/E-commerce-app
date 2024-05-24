@@ -10,7 +10,8 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
 //& cashOrder
 export const cashOrder = async (req, res, next) => {
 
-const order = createOrder()
+const order = await createOrder()
+
   //clear cart
   await cartModel.findOneAndUpdate(
     { user: req.userData._id },

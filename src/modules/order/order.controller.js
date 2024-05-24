@@ -9,8 +9,7 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
 
 //& cashOrder
 export const cashOrder = async (req, res, next) => {
-  // const order = await createOrder(req, res, next);
-  const order= createOrder
+  const order = await createOrder(req, res, next);
 
   // TODO
   //send mail with invoice
@@ -63,31 +62,17 @@ export const createWebhook = async (req, res) => {
 
   // Handle the event
   if (event.type === "checkout.session.completed") {
-    return res.json({ message: "Done" });
+    const { orderId } = event.data.object.metadata;
+    await orderModel.findOneAndUpdate(
+      { _id: orderId },
+      { isPaid: true },
+      { new: true }
+    );
   } else {
     return res.json({ message: "Failed" });
   }
 };
 
-export const onlinePayment = async (data) => {
-  const { client_reference_id, customer_email } = data;
-  const cart = await cartModel.findById(client_reference_id);
-  //create order
-  const order = await orderModel.create({
-    ...req.body,
-    isPaid: true,
-    user: customer_email,
-    products: cart.products.map(
-      ({ productId: { title, price, finalPrice, _id }, quantity }) => ({
-        quantity,
-        product: { title, price, finalPrice, productId: _id },
-      })
-    ),
-    phone: data.metadata.phone,
-    phone: data.metadata.shippingAddress,
-  });
-  if (!order) return next(new Error("Order failed", { cause: 400 }));
-};
 
 // TODO
 //cancel order

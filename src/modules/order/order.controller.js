@@ -62,7 +62,9 @@ export const cashOrder = async (req, res, next) => {
     }));
     await productModel.bulkWrite(options);
   }
-
+  if (req.body.payment === "visa") {
+    paymentSession();
+  }
   //clear cart
   await cartModel.findOneAndUpdate(
     { user: req.userData._id },
@@ -70,6 +72,7 @@ export const cashOrder = async (req, res, next) => {
     { new: true }
   );
 
+  // TODO
   //send mail with invoice
 
   //res
@@ -77,43 +80,45 @@ export const cashOrder = async (req, res, next) => {
 };
 
 // &paymentSession
-export const paymentSession = async (req, res, next) => {
-  const cart = await cartModel.findOne({ user: req.userData._id });
-  //check empty cart
-  if (cart.products.length === 0)
-    return next(
-      new Error("Empty Cart!,Try to add some products", { cause: 400 })
-    );
+export function paymentSession() {
+  return async (req, res, next) => {
+    const cart = await cartModel.findOne({ user: req.userData._id });
+    //check empty cart
+    if (cart.products.length === 0)
+      return next(
+        new Error("Empty Cart!,Try to add some products", { cause: 400 })
+      );
 
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price_data: {
-          currency: "EGP",
-          unit_amount: cart.totalPrice * 100,
-          product_data: {
-            name: `${req.userData.userName}'s cart`,
+    const session = await stripe.checkout.sessions.create({
+      line_items: [
+        {
+          price_data: {
+            currency: "EGP",
+            unit_amount: cart.totalPrice * 100,
+            product_data: {
+              name: `${req.userData.userName}'s cart`,
+            },
           },
+          quantity: 1,
         },
-        quantity: 1,
+      ],
+      mode: "payment",
+      payment_method_types: ["card"],
+      success_url: process.env.SUCCESS_URL,
+      cancel_url: process.env.CANCEL_URL,
+      customer_email: req.userData.email,
+      client_reference_id: cart._id.toString(), //unique id for session after payment
+      metadata: {
+        shippingAddress: {
+          city: req.body.city,
+          address: req.body.address,
+        },
+        phone: req.body.phone,
       },
-    ],
-    mode: "payment",
-    payment_method_types: ["card"],
-    success_url: process.env.SUCCESS_URL,
-    cancel_url: process.env.CANCEL_URL,
-    customer_email: req.userData.email,
-    client_reference_id: cart._id.toString(), //unique id for session after payment
-    metadata: {
-      shippingAddress: {
-        city: req.body.city,
-        address: req.body.address,
-      },
-      phone: req.body.phone,
-    },
-  });
-  res.json({ url: session.url });
-};
+    });
+    res.json({ url: session.url });
+  };
+}
 
 // &createWebhook
 export const createWebhook = async (req, res) => {

@@ -43,10 +43,12 @@ const orderSchema = new Schema(
       ],
       default: "placed",
     },
+
     isPaid:{
       type: Boolean,
       default: "false",
     },
+    
     coupon: { type: Types.ObjectId, ref: "Coupon" },
   },
   { timestamps: true }

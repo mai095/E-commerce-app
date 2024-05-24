@@ -38,6 +38,7 @@ categoryRouter
     validation(categorySchema.updateCategory),
     catchError(categoryController.updateCategory)
   )
+  // &deleteCategory
   .delete(
     isAuthenticated,
     isAuthorized("admin"),

@@ -10,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
 //& cashOrder
 export const cashOrder = async (req, res, next) => {
   // const order = await createOrder(req, res, next);
-  const order= createOrder
+  const order= createOrder()
 
   // TODO
   //send mail with invoice

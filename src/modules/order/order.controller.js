@@ -78,7 +78,7 @@ export const cashOrder = async (req, res, next) => {
 
 // &paymentSession
 export const paymentSession = async (req, res, next) => {
-  console.log(req.originalUrl);
+  
   const cart = await cartModel.findOne({ user: req.userData._id });
   //check empty cart
   if (cart.products.length === 0)

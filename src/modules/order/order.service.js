@@ -67,17 +67,17 @@ import catchError from "../../middlewares/catchError.js";
 //   return order;
 // }
 
-export const createOrder = () => {
- return async(req,res,next)=>{
+export const createOrder = catchError(() => {
+  return async (req, res, next) => {
     const cart = await cartModel.findOne({ user: req.userData._id });
     if (!cart) return next(new Error("Cart not found", { cause: 404 }));
-  
+
     //check empty cart
     if (cart.products.length === 0)
       return next(
         new Error("Empty Cart!,Try to add some products", { cause: 400 })
       );
-  
+
     //check product
     for (let i = 0; i < cart.products.length; i++) {
       const product = await productModel.findById(cart.products[i].productId);
@@ -87,7 +87,7 @@ export const createOrder = () => {
             casue: 404,
           })
         );
-  
+
       //check stock
       if (!product.inStock(cart.products[i].quantity))
         return next(
@@ -96,7 +96,7 @@ export const createOrder = () => {
           )
         );
     }
-  
+
     //create order
     const order = await orderModel.create({
       ...req.body,
@@ -109,7 +109,7 @@ export const createOrder = () => {
       ),
     });
     if (!order) return next(new Error("Order failed", { cause: 400 }));
-  
+
     //update stock by bulkWrite
     if (order) {
       const options = cart.products.map((product) => ({
@@ -129,5 +129,5 @@ export const createOrder = () => {
       { new: true }
     );
     return order;
- }
-};
+  };
+});

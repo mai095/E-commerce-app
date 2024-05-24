@@ -22,7 +22,7 @@ export const addToCart = async (req, res, next) => {
       (prd) => prd.productId._id.toString() === productId
     );
 
-    if (!product.inStock(theProduct.quantity + quantity))
+    if (!product.inStock(theProduct.quantity))
       return next(
         new Error(`Sorry, Only ${product.quantity} items are available`)
       );

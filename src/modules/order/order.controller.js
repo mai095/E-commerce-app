@@ -9,15 +9,8 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
 
 //& cashOrder
 export const cashOrder = async (req, res, next) => {
-
-const order = await createOrder(req, res, next)
-
-  //clear cart
-  await cartModel.findOneAndUpdate(
-    { user: req.userData._id },
-    { products: [] },
-    { new: true }
-  );
+  // const order = await createOrder(req, res, next);
+  const order= createOrder
 
   // TODO
   //send mail with invoice
@@ -27,46 +20,33 @@ const order = await createOrder(req, res, next)
 };
 
 // &paymentSession
-export function paymentSession() {
-  return async (req, res, next) => {
-    const cart = await cartModel.findOne({ user: req.userData._id });
-    //check empty cart
-    if (cart.products.length === 0)
-      return next(
-        new Error("Empty Cart!,Try to add some products", { cause: 400 })
-      );
-
-    const session = await stripe.checkout.sessions.create({
-      line_items: [
-        {
-          price_data: {
-            currency: "EGP",
-            unit_amount: cart.totalPrice * 100,
-            product_data: {
-              name: `${req.userData.userName}'s cart`,
-            },
+export const paymentSession = async (req, res, next) => {
+  const order = await createOrder(req, res, next);
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: "EGP",
+          unit_amount: cart.totalPrice * 100,
+          product_data: {
+            name: `${req.userData.userName}'s cart`,
           },
-          quantity: 1,
         },
-      ],
-      mode: "payment",
-      payment_method_types: ["card"],
-      success_url: process.env.SUCCESS_URL,
-      cancel_url: process.env.CANCEL_URL,
-      customer_email: req.userData.email,
-      client_reference_id: cart._id.toString(), //unique id for session after payment
-      metadata: {
-        shippingAddress: {
-          city: req.body.city,
-          address: req.body.address,
-        },
-        phone: req.body.phone,
+        quantity: 1,
       },
-    });
-    // res.json({ url: session.url });
-    return session.url
-  };
-}
+    ],
+    mode: "payment",
+    payment_method_types: ["card"],
+    success_url: process.env.SUCCESS_URL,
+    cancel_url: process.env.CANCEL_URL,
+    customer_email: req.userData.email,
+    client_reference_id: cart._id.toString(), //unique id for session after payment
+    metadata: {
+      orderId: order._id,
+    },
+  });
+  res.json({ url: session.url });
+};
 
 // &createWebhook
 export const createWebhook = async (req, res) => {

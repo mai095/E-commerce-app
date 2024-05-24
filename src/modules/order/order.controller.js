@@ -41,9 +41,7 @@ export const paymentSession = async (req, res, next) => {
     cancel_url: process.env.CANCEL_URL,
     customer_email: req.userData.email,
     client_reference_id: cart._id.toString(), //unique id for session after payment
-    metadata: {
-      orderId: order._id.toString(),
-    },
+    metadata: { orderId: order._id.toString() },
   });
   res.json({ url: session.url });
 };
@@ -63,7 +61,7 @@ export const createWebhook = async (req, res) => {
 
   // Handle the event
   if (event.type === "checkout.session.completed") {
-    const { orderId } = event.data.object.metadata;
+    const orderId = event.data.object.metadata.orderId;
     await orderModel.findOneAndUpdate(
       { _id: orderId },
       { isPaid: true },
@@ -73,7 +71,6 @@ export const createWebhook = async (req, res) => {
     return res.json({ message: "Failed" });
   }
 };
-
 
 // TODO
 //cancel order

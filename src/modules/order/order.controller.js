@@ -10,7 +10,12 @@ const stripe = new Stripe(process.env.STRIPE_KEY);
 //& cashOrder
 export const cashOrder = async (req, res, next) => {
   const order = await createOrder(req, res, next);
-
+  //clear cart
+  await cartModel.findOneAndUpdate(
+    { user: req.userData._id },
+    { products: [] },
+    { new: true }
+  );
   // TODO
   //send mail with invoice
 
@@ -65,6 +70,12 @@ export const createWebhook = async (req, res) => {
     await orderModel.findOneAndUpdate(
       { _id: orderId },
       { isPaid: true },
+      { new: true }
+    );
+    //clear cart
+    await cartModel.findOneAndUpdate(
+      { user: req.userData._id },
+      { products: [] },
       { new: true }
     );
   } else {

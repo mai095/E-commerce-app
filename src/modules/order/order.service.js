@@ -57,11 +57,6 @@ export async function createOrder(req, res, next) {
     }));
     await productModel.bulkWrite(options);
   }
-    //clear cart
-    await cartModel.findOneAndUpdate(
-        { user: req.userData._id },
-        { products: [] },
-        { new: true }
-      );
+
   return order;
 }

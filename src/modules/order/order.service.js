@@ -3,7 +3,7 @@ import { orderModel } from "../../../DB/models/order.model.js";
 import productModel from "../../../DB/models/product.model.js";
 
 export function createOrder() {
-  async (req, res, next) => {
+ return async (req, res, next) => {
     //get user cart
     const cart = await cartModel.findOne({ user: req.userData._id });
     if (!cart) return next(new Error("Cart not found", { cause: 404 }));

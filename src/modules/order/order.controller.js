@@ -78,7 +78,6 @@ export const cashOrder = async (req, res, next) => {
 
 // &paymentSession
 export const paymentSession = async (req, res, next) => {
-  
   const cart = await cartModel.findOne({ user: req.userData._id });
   //check empty cart
   if (cart.products.length === 0)
@@ -117,31 +116,24 @@ export const paymentSession = async (req, res, next) => {
 };
 
 // &createWebhook
-export const createWebhook = async (request, response) => {
+export const createWebhook = async (req, res) => {
   const stripe = new Stripe(process.env.STRIPE_KEY);
   const endpointSecret = process.env.ENDPOINT_STRIPE_SECRET;
-  const sig = request.headers["stripe-signature"];
+  const sig = req.headers["stripe-signature"];
   let event;
   try {
-    event = stripe.webhooks.constructEvent(request.body, sig, endpointSecret);
+    event = stripe.webhooks.constructEvent(req.body, sig, endpointSecret);
   } catch (err) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
+    res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
 
   // Handle the event
-  switch (event.type) {
-    case "checkout.session.completed":
-      const data = event.data.object;
-      await onlinePayment(data);
-      break;
-    // ... handle other event types
-    default:
-      console.log(`Unhandled event type ${event.type}`);
+  if (event.type === "checkout.session.completed") {
+    return res.json({ message: "Done" });
+  } else {
+    return res.json({ message: "Failed" });
   }
-
-  // Return a 200 response to acknowledge receipt of the event
-  response.json("createWebhook is done");
 };
 
 export const onlinePayment = async (data) => {
@@ -164,6 +156,5 @@ export const onlinePayment = async (data) => {
   if (!order) return next(new Error("Order failed", { cause: 400 }));
 };
 
-
-// TODO 
+// TODO
 //cancel order

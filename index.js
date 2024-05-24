@@ -16,7 +16,7 @@ app.use(cors());
 
 app.use((req, res, next) => {
   //webhook use buffer data
-  if (req.originalUrl == "/order/webhook") {
+  if (req.originalUrl == "/api/v1/order/webhook") {
     return next();
   }
   express.json()(req, res, next);

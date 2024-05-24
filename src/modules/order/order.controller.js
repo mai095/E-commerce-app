@@ -42,7 +42,7 @@ export const paymentSession = async (req, res, next) => {
     customer_email: req.userData.email,
     client_reference_id: cart._id.toString(), //unique id for session after payment
     metadata: {
-      orderId: order._id,
+      orderId: order._id.toString(),
     },
   });
   res.json({ url: session.url });

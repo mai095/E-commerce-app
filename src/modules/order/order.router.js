@@ -20,7 +20,7 @@ orderRouter
 
 // &paymentSession
 orderRouter
-  .route("/")
+  .route("/paymentSession")
   .post(
     isAuthenticated,
     isAuthorized("user"),

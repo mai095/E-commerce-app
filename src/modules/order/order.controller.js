@@ -72,12 +72,13 @@ export const createWebhook = async (req, res) => {
       { isPaid: true },
       { new: true }
     );
+
     //clear cart
-    await cartModel.findOneAndUpdate(
-      { user: req.userData._id },
-      { products: [] },
-      { new: true }
-    );
+    // await cartModel.findOneAndUpdate(
+    //   { user: req.userData._id },
+    //   { products: [] },
+    //   { new: true }
+    // );
   } else {
     return res.json({ message: "Failed" });
   }

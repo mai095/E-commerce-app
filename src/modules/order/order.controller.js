@@ -97,7 +97,7 @@ export const cancelOrder = async (req, res, next) => {
 
   for(const product of order.products ){
 
-      console.log(product);
+      console.log(product.productId);
     }
 
 

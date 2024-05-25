@@ -3,10 +3,9 @@ import { Schema, Types, model } from "mongoose";
 const orderSchema = new Schema(
   {
     products: [
-      //hard coded
       {
         product: {
-         // productId: { type: Types.ObjectId, ref: "Product", required: true },
+         productId: { type: Types.ObjectId, ref: "Product", required: true },
           title: { type: String, required: true },
           price: { type: Number, required: true },
           finalPrice: { type: Number, required: true },

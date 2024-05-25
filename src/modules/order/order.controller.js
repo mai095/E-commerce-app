@@ -104,7 +104,7 @@ export const cancelOrder = async (req, res, next) => {
   }));
   await productModel.bulkWrite(options);
 
-  order.status = "cancel";
+  order.status = "canceled";
   await order.save();
   //res
   return res.json({

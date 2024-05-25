@@ -86,7 +86,6 @@ export const createWebhook = async (req, res) => {
 
 //&cancelOrder
 export const cancelOrder = async (req, res, next) => {
-
   const order = await orderModel.findById(req.params.orderId);
   if (!order) return next(new Error("Order not found", { cause: 404 }));
 
@@ -95,17 +94,18 @@ export const cancelOrder = async (req, res, next) => {
     return next(
       new Error(`Sorry order can't be canceled at status ${order.status}`)
     );
-    const options = order.products.map((product) => ({
-      updateOne: {
-        filter: { _id: product.product.productId },
-        update: {
-          $inc: { quantity: product.quantity, sold: -product.quantity },
-        },
+  const options = order.products.map((product) => ({
+    updateOne: {
+      filter: { _id: product.product.productId },
+      update: {
+        $inc: { quantity: product.quantity, sold: -product.quantity },
       },
-    }));
-    await productModel.bulkWrite(options);
+    },
+  }));
+  await productModel.bulkWrite(options);
 
-
+  order.status = "cancel";
+  await order.save();
   //res
   return res.json({
     success: true,

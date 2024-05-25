@@ -105,7 +105,7 @@ export const cancelOrder = async (req, res, next) => {
   //update stock
   const options = order.products.map((product) => ({
     updateOne: {
-      filter: { _id: product.product.productId },
+      filter: { _id: product.productId },
       update: {
         $inc: { quantity: product.quantity, sold: -product.quantity },
       },

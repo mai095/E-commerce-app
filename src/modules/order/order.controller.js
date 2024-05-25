@@ -91,10 +91,8 @@ export const cancelOrder = async (req, res, next) => {
 
   //check status
   if (
-    (order.status !== "placed" && order.payment == "cash") ||
-    (order.status !== "placed" &&
-      order.payment == "visa" &&
-      order.isPaid == true)
+    (order.status == "delivered" || order.status == "shipped",
+    order.status == "canceled")
   )
     return next(
       new Error(`Sorry order can't be canceled at status ${order.status}`)

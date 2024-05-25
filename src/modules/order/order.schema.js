@@ -11,3 +11,10 @@ export const createOrder = joi
     payment: joi.string().valid("cash", "visa"),
   })
   .required();
+
+// *cancelOrder
+export const cancelOrder = joi
+.object({
+  id: joi.string().custom(validObjectId).required(),
+})
+.required();

@@ -42,4 +42,12 @@ orderRouter.post(
   catchError(orderController.createWebhook)
 );
 
+// &cancel
+orderRouter.patch(
+  "/:id",
+  isAuthenticated,
+  isAuthorized("user"),
+  validation(orderSchema.cancelOrder),
+  catchError(orderController.cancelOrder)
+);
 export default orderRouter;

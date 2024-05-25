@@ -96,10 +96,10 @@ export const cancelOrder = async (req, res, next) => {
     );
 
   for(const product of order.products ){
-    for(const prod of product){
-      console.log(prod);
+
+      console.log(product);
     }
-  }
+
 
   order.status = "canceled";
   await order.save();

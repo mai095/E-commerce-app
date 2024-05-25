@@ -16,6 +16,6 @@ export const createOrder = joi
 // *cancelOrder
 export const cancelOrder = joi
 .object({
-  id: joi.string().custom(validationObjectID).required(),
+  orderId: joi.string().custom(validationObjectID).required(),
 })
 .required();

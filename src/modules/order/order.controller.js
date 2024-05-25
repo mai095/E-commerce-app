@@ -86,13 +86,15 @@ export const createWebhook = async (req, res) => {
 
 //&cancelOrder
 export const cancelOrder = async (req, res, next) => {
-  const order = await orderModel.findById(req.params.id);
+  const order = await orderModel.findById(req.params.orderId);
   if (!order) return next(new Error("Order not found", { cause: 404 }));
 
   //check status
   if (
-    (order.status == "delivered" || order.status == "shipped",
-    order.status == "canceled")
+    (order.status !== "placed" && order.payment == "cash") ||
+    (order.status !== "placed" &&
+      order.payment == "visa" &&
+      order.isPaid == true)
   )
     return next(
       new Error(`Sorry order can't be canceled at status ${order.status}`)
@@ -103,15 +105,15 @@ export const cancelOrder = async (req, res, next) => {
   await order.save();
 
   //update stock
-  const options = order.products.map((product) => ({
-    updateOne: {
-      filter: { _id: product.productId },
-      update: {
-        $inc: { quantity: product.quantity, sold: -product.quantity },
-      },
-    },
-  }));
-  await productModel.bulkWrite(options);
+  // const options = order.products.map((product) => ({
+  //   updateOne: {
+  //     filter: { _id: product.product.productId },
+  //     update: {
+  //       $inc: { quantity: product.quantity, sold: -product.quantity },
+  //     },
+  //   },
+  // }));
+  // await productModel.bulkWrite(options);
 
   //res
   return res.json({

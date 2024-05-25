@@ -94,16 +94,16 @@ export const cancelOrder = async (req, res, next) => {
     return next(
       new Error(`Sorry order can't be canceled at status ${order.status}`)
     );
-  console.log(order.products);
-  const options = order.products.map((product) => ({
-    updateOne: {
-      filter: { _id: product._id },
-      update: {
-        $inc: { quantity: product.quantity, sold: -product.quantity },
-      },
-    },
-  }));
-  await productModel.bulkWrite(options);
+
+    for (const product of order.products) {
+      await productModel.findByIdAndUpdate(product._id, {
+        $inc: {
+          solidItems: product.quantity,
+          availableItems: -product.quantity,
+        },
+      });
+    }
+
 
   order.status = "canceled";
   await order.save();

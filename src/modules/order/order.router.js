@@ -44,7 +44,7 @@ orderRouter.post(
 
 // &cancel
 orderRouter.patch(
-  "/:id",
+  "/:orderId",
   isAuthenticated,
   isAuthorized("user"),
   validation(orderSchema.cancelOrder),

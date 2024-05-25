@@ -1,4 +1,5 @@
 import joi from "joi";
+import { validationObjectID } from "../../middlewares/validation.js";
 
 // *createOrder
 export const createOrder = joi
@@ -15,6 +16,6 @@ export const createOrder = joi
 // *cancelOrder
 export const cancelOrder = joi
 .object({
-  id: joi.string().custom(validObjectId).required(),
+  id: joi.string().custom(validationObjectID).required(),
 })
 .required();

@@ -1,9 +1,9 @@
 import { cartModel } from "../../../DB/models/cart.model.js";
 import { orderModel } from "../../../DB/models/order.model.js";
-
+import productModel from "../../../DB/models/product.model.js";
+import { createOrder } from "./order.service.js";
 import Stripe from "stripe";
 import dotenv from "dotenv";
-import { createOrder } from "./order.service.js";
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_KEY);
 
